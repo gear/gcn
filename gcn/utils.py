@@ -110,6 +110,30 @@ def preprocess_adj(adj):
     adj_normalized = normalize_adj(adj + sp.eye(adj.shape[0]))
     return sparse_to_tuple(adj_normalized)
 
+def preprocess_mage(adj):
+    """Preprocessing of adjacency matrix to motif matrix
+    Protype: triangle motif"""
+    coocurence_count = {}
+    g = nx.from_scipy_sparse_matrix(adj)
+    for node in g:
+        n_set = set(g.neighbors(node))
+        for neig in n_set:
+            if (node, neig) in coocurence_count:
+                continue
+            nn_set = set(g.neighbors(neig))
+            intersect = n_set.intersection(nn_set)
+            if intersect:
+                coocurence_count[(node, neig)] = len(intersect) + 1
+                coocurence_count[(neig, node)] = len(intersect) + 1
+            else:
+                coocurence_count[(node, neig)] = 1
+                coocurence_count[(neig, node)] = 1
+    row = np.array([i for i, _ in coocurence_count.keys()])
+    col = np.array([j for _, j in coocurence_count.keys()])
+    data = np.array([v for v in coocurence_count.values()])
+    adj = sp.csr_matrix((data, (row, col)), shape=adj.shape)
+    return preprocess_adj(adj)
+
 
 def construct_feed_dict(features, support, labels, labels_mask, placeholders):
     """Construct feed dictionary."""

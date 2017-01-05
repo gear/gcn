@@ -16,7 +16,7 @@ tf.set_random_seed(seed)
 flags = tf.app.flags
 FLAGS = flags.FLAGS
 flags.DEFINE_string('dataset', 'cora', 'Dataset string.')  # 'cora', 'citeseer', 'pubmed'
-flags.DEFINE_string('model', 'gcn', 'Model string.')  # 'gcn', 'gcn_cheby', 'dense'
+flags.DEFINE_string('model', 'mage', 'Model string.')  # 'gcn', 'gcn_cheby', 'dense', 'mage'
 flags.DEFINE_float('learning_rate', 0.01, 'Initial learning rate.')
 flags.DEFINE_integer('epochs', 200, 'Number of epochs to train.')
 flags.DEFINE_integer('hidden1', 16, 'Number of units in hidden layer 1.')
@@ -42,6 +42,10 @@ elif FLAGS.model == 'dense':
     support = [preprocess_adj(adj)]  # Not used
     num_supports = 1
     model_func = MLP
+elif FLAGS.model == 'mage':
+    support = [preprocess_mage(adj)]
+    num_supports = 1
+    model_func = GCN
 else:
     raise ValueError('Invalid argument for model: ' + str(FLAGS.model))
 
