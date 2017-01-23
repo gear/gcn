@@ -82,7 +82,7 @@ def evaluate(features, support, labels, mask, placeholders):
 
 
 # Init variables
-sess.run(tf.initialize_all_variables())
+sess.run(tf.global_variables_initializer())
 
 cost_val = []
 
