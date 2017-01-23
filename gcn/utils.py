@@ -42,6 +42,7 @@ def load_data(dataset_str):
         ty = ty_extended
 
     features = sp.vstack((allx, tx)).tolil()
+    # Sort features to make testing into a continuous range
     features[test_idx_reorder, :] = features[test_idx_range, :]
     adj = nx.adjacency_matrix(nx.from_dict_of_lists(graph))
 
@@ -122,12 +123,8 @@ def preprocess_mage(adj):
                 continue
             nn_set = set(g.neighbors(neig))
             intersect = n_set.intersection(nn_set)
-            if intersect:
-                coocurence_count[(node, neig)] = len(intersect) + 1
-                coocurence_count[(neig, node)] = len(intersect) + 1
-            else:
-                coocurence_count[(node, neig)] = 1
-                coocurence_count[(neig, node)] = 1
+            coocurence_count[(node, neig)] = len(intersect) if intersect else 1
+            coocurence_count[(neig, node)] = len(intersect) if intersect else 1
     row = np.array([i for i, _ in coocurence_count.keys()])
     col = np.array([j for _, j in coocurence_count.keys()])
     data = np.array([v for v in coocurence_count.values()])
@@ -135,7 +132,7 @@ def preprocess_mage(adj):
     return preprocess_adj(adj)
 
 
-def construct_feed_dict(features, support, labels, labels_mask, placeholders):
+def construct_feed_dict(features, support, labels, labels_mask, placeholders, support_m=None):
     """Construct feed dictionary."""
     feed_dict = dict()
     feed_dict.update({placeholders['labels']: labels})
@@ -143,6 +140,8 @@ def construct_feed_dict(features, support, labels, labels_mask, placeholders):
     feed_dict.update({placeholders['features']: features})
     feed_dict.update({placeholders['support'][i]: support[i] for i in range(len(support))})
     feed_dict.update({placeholders['num_features_nonzero']: features[1].shape})
+    if support_m:
+        feed_dict.update({placeholders['motif_support'][i]: support_m[i] for i in range(len(support_m))})
     return feed_dict
 
 
