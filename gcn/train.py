@@ -15,7 +15,7 @@ tf.set_random_seed(seed)
 # Settings
 flags = tf.app.flags
 FLAGS = flags.FLAGS
-flags.DEFINE_string('dataset', 'pubmed', 'Dataset string.')  # 'cora', 'citeseer', 'pubmed'
+flags.DEFINE_string('dataset', 'citeseer', 'Dataset string.')  # 'cora', 'citeseer', 'pubmed'
 flags.DEFINE_string('model', 'mage', 'Model string.')  # 'gcn', 'gcn_cheby', 'dense', 'mage'
 flags.DEFINE_float('learning_rate', 0.01, 'Initial learning rate.')
 flags.DEFINE_integer('epochs', 200, 'Number of epochs to train.')
@@ -47,7 +47,7 @@ elif FLAGS.model == 'dense':
     num_supports = 1
     model_func = MLP
 elif FLAGS.model == 'mage':
-    support = [preprocess_adj(adj)],
+    support = [preprocess_adj(adj)]
     support_m = [preprocess_mage(adj)]
     print("MAGE model")
     num_supports = 1
@@ -91,7 +91,7 @@ for epoch in range(FLAGS.epochs):
 
     t = time.time()
     # Construct feed dictionary
-    feed_dict = construct_feed_dict(features, support, y_train, train_mask, placeholders)
+    feed_dict = construct_feed_dict(features, support, y_train, train_mask, placeholders, support_m)
     feed_dict.update({placeholders['dropout']: FLAGS.dropout})
 
     # Training step
