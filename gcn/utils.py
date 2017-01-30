@@ -2,6 +2,7 @@ import numpy as np
 import pickle as pkl
 import networkx as nx
 import scipy.sparse as sp
+#import motifs as mt
 from scipy.sparse.linalg.eigen.arpack import eigsh
 import sys
 
@@ -115,20 +116,16 @@ def preprocess_adj(adj):
     adj_normalized = normalize_adj(adj + sp.eye(adj.shape[0]))
     return sparse_to_tuple(adj_normalized)
 
-def preprocess_mage(adj):
+def preprocess_mage(adj, additive=True, motif=None):
     """Preprocessing of adjacency matrix to motif matrix
-    Protype: triangle motif"""
+    Parameters
+    ==========
+    """
+    if motif is None:
+        return preprocess_adj(adj)
     coocurence_count = {}
     g = nx.from_scipy_sparse_matrix(adj)
-    for node in g:
-        n_set = set(g.neighbors(node))
-        for neig in n_set:
-            if (node, neig) in coocurence_count:
-                continue
-            nn_set = set(g.neighbors(neig))
-            intersect = n_set.intersection(nn_set)
-            coocurence_count[(node, neig)] = len(intersect) if intersect else 1
-            coocurence_count[(neig, node)] = len(intersect) if intersect else 1
+    mt.populate_coocurrence(coocurence_count, g, additive)
     row = np.array([i for i, _ in coocurence_count.keys()])
     col = np.array([j for _, j in coocurence_count.keys()])
     data = np.array([v for v in coocurence_count.values()])
