@@ -125,7 +125,7 @@ def preprocess_mage(adj, additive=True, motif=None):
         return preprocess_adj(adj)
     coocurence_count = {}
     g = nx.from_scipy_sparse_matrix(adj)
-    mt.populate_coocurrence(coocurence_count, g, additive)
+    motif.populate_coocurrence(coocurence_count, g, additive)
     row = np.array([i for i, _ in coocurence_count.keys()])
     col = np.array([j for _, j in coocurence_count.keys()])
     data = np.array([v for v in coocurence_count.values()])
