@@ -40,4 +40,5 @@ class motifs:
         co-occurrence on top of adj-matrix)."""
         for nodes in nxgraph:
             if self.anchor_connected():
+                pass  # TODO: Generate all size self.size subgraphs
             

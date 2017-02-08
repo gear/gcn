@@ -175,6 +175,6 @@ def gen_matrix_permutations(adj_motif):
     the @param adj_motif provided as a 2-d numpy array. This implementation
     can be inefficient with large motif size."""
     m_set = set()
-    for i in itertools.permutation(adj_motif):
-        m_set.add(str(i))
+    for i in itertools.permutations(adj_motif):
+        m_set.add(i.tolist())
     return m_set
