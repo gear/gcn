@@ -2,6 +2,7 @@
 
 import numpy as np
 import networkx as nx
+import utils
 
 
 class motifs:
@@ -12,12 +13,25 @@ class motifs:
     only the anchored nodes. Note that there can be exactly two
     anchored nodes."""
 
-    def __init__(self, name="triangle", directed=False, nxmotif, **kwargs):
-        """Create a motif with an nxsubgraph"""
+    def __init__(self, name="triangle", directed=False, adj_motif, **kwargs):
+        """Create a motif with an nxsubgraph."""
         self.name = name
         self.directed = directed
-        self.m = nxmotif  # nx graph
-        self.anchors = []  # list of anchor nodes
+        self.m = adj_motif  # adj matrix numpy 2d array
+        self.size = adj_motif.shape[0]
+        self.anchors = None  # tuple of anchor nodes
+        self.perms = utils.gen_matrix_permutation(adj_motif)  #set
+
+    def anchor_connected(self):
+        """Check if the anchors of the motif is connected."""
+        if self.anchors:
+            i, j = self.anchors
+            if self.directed:
+                return self.m[i][j] == 1 or self.m[j][i] == 1
+            else:
+                return self.m[i][j] == 1 
+        else:
+            return False 
 
     def populate_coocurrence(self, coo_dict, nxgraph, additive=True):
         """Fill the @param coo_dict with motif co-occurrence matrix.
@@ -25,10 +39,5 @@ class motifs:
         additive=True means also counting the size 2 motif (add motif
         co-occurrence on top of adj-matrix)."""
         for nodes in nxgraph:
-            for other_nodes in nxgraph:
-                if nodes == other_nodes:
-                    continue
-                 
-        
-
-                 
+            if self.anchor_connected():
+            
