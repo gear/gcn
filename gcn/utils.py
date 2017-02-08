@@ -2,6 +2,7 @@ import numpy as np
 import pickle as pkl
 import networkx as nx
 import scipy.sparse as sp
+import itertools
 #import motifs as mt
 from scipy.sparse.linalg.eigen.arpack import eigsh
 import sys
@@ -167,3 +168,13 @@ def chebyshev_polynomials(adj, k):
         t_k.append(chebyshev_recurrence(t_k[-1], t_k[-2], scaled_laplacian))
 
     return sparse_to_tuple(t_k)
+
+
+def gen_matrix_permutations(adj_motif):
+    """Generate a set of adjacency matrix strings (hashable) from
+    the @param adj_motif provided as a 2-d numpy array. This implementation
+    can be inefficient with large motif size."""
+    m_set = set()
+    for i in itertools.permutation(adj_motif):
+        m_set.add(str(i))
+    return m_set

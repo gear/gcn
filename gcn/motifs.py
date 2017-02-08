@@ -17,10 +17,10 @@ class motifs:
         """Create a motif with an nxsubgraph."""
         self.name = name
         self.directed = directed
-        self.m = adj_motif  # adj matrix numpy 2d array
+        self.m = adj_motif  # adj matrix
         self.size = adj_motif.shape[0]
         self.anchors = None  # tuple of anchor nodes
-        self.perms = utils.gen_matrix_permutation(adj_motif)  #set
+        self.perms = utils.gen_matrix_permutations(adj_motif)  #set
 
     def anchor_connected(self):
         """Check if the anchors of the motif is connected."""
